@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"git.garena.com/sea-labs-id/batch-02/aulia-nabil/assignment-05-golang-backend/internal/dto"
@@ -12,6 +13,7 @@ func (h *Handler) Register(c *gin.Context) {
 	input := &dto.UserRequestBody{}
 
 	err := c.ShouldBindJSON(input)
+	log.Println(err)
 	if err != nil {
 		errors := utils.FormatValidationError(err)
 		response := utils.ErrorResponse("register failed", http.StatusUnprocessableEntity, errors)

@@ -12,7 +12,11 @@ func FormatValidationError(err error) []string {
 
 	if !errors.Is(err, io.EOF) {
 		for _, e := range err.(validator.ValidationErrors) {
-			errorMessage = append(errorMessage, e.Field()+" "+e.Tag())
+			if e.Param() != "" {
+				errorMessage = append(errorMessage, e.Field()+" "+e.Tag()+" "+e.Param())
+			} else {
+				errorMessage = append(errorMessage, e.Field()+" "+e.Tag())
+			}
 		}
 		return errorMessage
 	}
