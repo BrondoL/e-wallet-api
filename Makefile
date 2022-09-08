@@ -18,3 +18,6 @@ run:
 
 stop:
 	docker container stop e-wallet-api
+
+dev:
+	go run .

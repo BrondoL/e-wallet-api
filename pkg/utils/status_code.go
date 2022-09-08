@@ -13,6 +13,10 @@ func GetStatusCode(err error) int {
 		statusCode = http.StatusUnprocessableEntity
 	} else if _, ok := err.(*custom_error.UserAlreadyExistsError); ok {
 		statusCode = http.StatusConflict
+	} else if _, ok := err.(*custom_error.IncorrectCredentialsError); ok {
+		statusCode = http.StatusUnauthorized
+	} else if _, ok := err.(*custom_error.UserNotFoundError); ok {
+		statusCode = http.StatusNotFound
 	}
 	return statusCode
 }

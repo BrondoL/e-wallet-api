@@ -7,4 +7,5 @@ import (
 
 func (r *Router) Auth(route *gin.RouterGroup, h *handler.Handler) {
 	route.POST("/sign-up", h.Register)
+	route.POST("/sign-in", h.Login)
 }

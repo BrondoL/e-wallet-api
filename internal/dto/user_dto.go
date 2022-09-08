@@ -4,12 +4,6 @@ import (
 	"git.garena.com/sea-labs-id/batch-02/aulia-nabil/assignment-05-golang-backend/internal/model"
 )
 
-type UserRequestBody struct {
-	Name     string `json:"name" binding:"required,alphanum"`
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=5"`
-}
-
 type UserRequestParams struct {
 	UserID int `uri:"id" binding:"required"`
 }
