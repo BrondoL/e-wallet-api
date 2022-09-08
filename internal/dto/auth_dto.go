@@ -13,6 +13,15 @@ type RegisterRequestBody struct {
 	Password string `json:"password" binding:"required,min=5"`
 }
 
+type ForgotPasswordRequestBody struct {
+	Email string `json:"email" binding:"required,email"`
+}
+
+type ForgotPasswordResponseBody struct {
+	Email string `json:"email"`
+	Token string `json:"token"`
+}
+
 type LoginResponseBody struct {
 	ID    uint   `json:"id"`
 	Name  string `json:"name"`
@@ -26,5 +35,12 @@ func FormatLogin(user *model.User, token string) LoginResponseBody {
 		Name:  user.Name,
 		Email: user.Email,
 		Token: token,
+	}
+}
+
+func FormatForgotPassword(passwordReset *model.PasswordReset) ForgotPasswordResponseBody {
+	return ForgotPasswordResponseBody{
+		Email: passwordReset.Email,
+		Token: passwordReset.Token,
 	}
 }

@@ -52,7 +52,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	loggedinUser, err := h.userService.Attempt(input)
+	loggedinUser, err := h.authService.Attempt(input)
 	if err != nil {
 		statusCode := utils.GetStatusCode(err)
 		response := utils.ErrorResponse("login failed", statusCode, err.Error())
@@ -69,5 +69,29 @@ func (h *Handler) Login(c *gin.Context) {
 
 	formattedLogin := dto.FormatLogin(loggedinUser, token)
 	response := utils.SuccessResponse("login success", http.StatusOK, formattedLogin)
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *Handler) ForgotPassword(c *gin.Context) {
+	input := &dto.ForgotPasswordRequestBody{}
+
+	err := c.ShouldBindJSON(input)
+	if err != nil {
+		errors := utils.FormatValidationError(err)
+		response := utils.ErrorResponse("forgot password failed", http.StatusUnprocessableEntity, errors)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	passwordReset, err := h.authService.ForgotPass(input)
+	if err != nil {
+		statusCode := utils.GetStatusCode(err)
+		response := utils.ErrorResponse("forgot password failed", statusCode, err.Error())
+		c.JSON(statusCode, response)
+		return
+	}
+
+	formattedPasswordReset := dto.FormatForgotPassword(passwordReset)
+	response := utils.SuccessResponse("forgot password success", http.StatusOK, formattedPasswordReset)
 	c.JSON(http.StatusOK, response)
 }

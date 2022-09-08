@@ -16,12 +16,15 @@ func main() {
 	db := config.GetConn()
 
 	userRepository := repository.NewUserRepository(&repository.URConfig{DB: db})
+	passwordResetRepository := repository.NewPasswordResetRepository(&repository.PRConfig{DB: db})
 
 	userService := service.NewUserService(&service.USConfig{UserRepository: userRepository})
+	authService := service.NewAuthService(&service.ASConfig{UserRepository: userRepository, PasswordResetRepository: passwordResetRepository})
 	jwtService := service.NewJWTService(&service.JWTSConfig{})
 
 	h := handler.NewHandler(&handler.HandlerConfig{
 		UserService: userService,
+		AuthService: authService,
 		JWTService:  jwtService,
 	})
 

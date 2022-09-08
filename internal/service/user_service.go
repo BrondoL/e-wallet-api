@@ -12,7 +12,6 @@ import (
 
 type UserService interface {
 	CreateUser(input *dto.RegisterRequestBody) (*model.User, error)
-	Attempt(input *dto.LoginRequestBody) (*model.User, error)
 }
 
 type userService struct {
@@ -56,27 +55,4 @@ func (s *userService) CreateUser(input *dto.RegisterRequestBody) (*model.User, e
 		return newUser, err
 	}
 	return newUser, nil
-}
-
-func (s *userService) Attempt(input *dto.LoginRequestBody) (*model.User, error) {
-	_, err := mail.ParseAddress(input.Email)
-	if err != nil {
-		return &model.User{}, &custom_error.NotValidEmailError{}
-	}
-
-	user, err := s.userRepository.FindByEmail(input.Email)
-	if err != nil {
-		return user, err
-	}
-
-	if user.ID == 0 {
-		return user, &custom_error.UserNotFoundError{}
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
-	if err != nil {
-		return user, &custom_error.IncorrectCredentialsError{}
-	}
-
-	return user, nil
 }
