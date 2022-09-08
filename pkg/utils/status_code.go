@@ -17,6 +17,10 @@ func GetStatusCode(err error) int {
 		statusCode = http.StatusUnauthorized
 	} else if _, ok := err.(*custom_error.UserNotFoundError); ok {
 		statusCode = http.StatusNotFound
+	} else if _, ok := err.(*custom_error.PasswordNotSame); ok {
+		statusCode = http.StatusUnprocessableEntity
+	} else if _, ok := err.(*custom_error.ResetTokenNotFound); ok {
+		statusCode = http.StatusNotFound
 	}
 	return statusCode
 }

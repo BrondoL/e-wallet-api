@@ -15,6 +15,7 @@ import (
 type AuthService interface {
 	Attempt(input *dto.LoginRequestBody) (*model.User, error)
 	ForgotPass(input *dto.ForgotPasswordRequestBody) (*model.PasswordReset, error)
+	ResetPass(input *dto.ResetPasswordRequestBody) (*model.PasswordReset, error)
 }
 
 type authService struct {
@@ -83,6 +84,36 @@ func (s *authService) ForgotPass(input *dto.ForgotPasswordRequestBody) (*model.P
 
 	passwordReset, err = s.passwordResetRepository.Save(passwordReset)
 
+	if err != nil {
+		return passwordReset, err
+	}
+
+	return passwordReset, nil
+}
+
+func (s *authService) ResetPass(input *dto.ResetPasswordRequestBody) (*model.PasswordReset, error) {
+	passwordReset, err := s.passwordResetRepository.FindByToken(input.Token)
+	if err != nil {
+		return passwordReset, err
+	}
+
+	if passwordReset.Email == "" {
+		return passwordReset, &custom_error.ResetTokenNotFound{}
+	}
+
+	if input.Password != input.ConfirmPassword {
+		return passwordReset, &custom_error.PasswordNotSame{}
+	}
+
+	user := &passwordReset.User
+	user.Password = input.Password
+
+	_, err = s.userRepository.Update(user)
+	if err != nil {
+		return passwordReset, err
+	}
+
+	passwordReset, err = s.passwordResetRepository.Delete(passwordReset)
 	if err != nil {
 		return passwordReset, err
 	}

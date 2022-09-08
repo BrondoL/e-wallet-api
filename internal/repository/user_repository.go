@@ -11,6 +11,7 @@ type UserRepository interface {
 	FindByName(name string) ([]*model.User, error)
 	FindByEmail(email string) (*model.User, error)
 	Save(user *model.User) (*model.User, error)
+	Update(user *model.User) (*model.User, error)
 }
 
 type userRepository struct {
@@ -73,6 +74,15 @@ func (r *userRepository) FindByEmail(email string) (*model.User, error) {
 
 func (r *userRepository) Save(user *model.User) (*model.User, error) {
 	err := r.db.Create(&user).Error
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
+func (r *userRepository) Update(user *model.User) (*model.User, error) {
+	err := r.db.Save(&user).Error
 	if err != nil {
 		return user, err
 	}

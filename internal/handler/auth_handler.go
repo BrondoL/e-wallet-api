@@ -95,3 +95,27 @@ func (h *Handler) ForgotPassword(c *gin.Context) {
 	response := utils.SuccessResponse("forgot password success", http.StatusOK, formattedPasswordReset)
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *Handler) ResetPassword(c *gin.Context) {
+	input := &dto.ResetPasswordRequestBody{}
+
+	err := c.ShouldBindJSON(input)
+	if err != nil {
+		errors := utils.FormatValidationError(err)
+		response := utils.ErrorResponse("reset password failed", http.StatusUnprocessableEntity, errors)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	passwordReset, err := h.authService.ResetPass(input)
+	if err != nil {
+		statusCode := utils.GetStatusCode(err)
+		response := utils.ErrorResponse("reset password failed", statusCode, err.Error())
+		c.JSON(statusCode, response)
+		return
+	}
+
+	formattedUser := dto.FormatUser(&passwordReset.User)
+	response := utils.SuccessResponse("reset password success", http.StatusOK, formattedUser)
+	c.JSON(http.StatusOK, response)
+}
