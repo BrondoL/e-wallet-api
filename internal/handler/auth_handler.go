@@ -29,14 +29,24 @@ func (h *Handler) Register(c *gin.Context) {
 		return
 	}
 
-	token, err := h.jwtService.GenerateToken(int(newUser.ID))
+	inputWallet := &dto.WalletRequestBody{}
+	inputWallet.UserID = int(newUser.ID)
+	newWallet, err := h.walletService.CreateWallet(inputWallet)
+	if err != nil {
+		statusCode := utils.GetStatusCode(err)
+		response := utils.ErrorResponse("register failed", statusCode, err.Error())
+		c.JSON(statusCode, response)
+		return
+	}
+
+	token, err := h.jwtService.GenerateToken(int(newUser.ID), newWallet.Number)
 	if err != nil {
 		response := utils.ErrorResponse("register failed", http.StatusInternalServerError, err.Error())
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
-	formattedLogin := dto.FormatLogin(newUser, token)
+	formattedLogin := dto.FormatLogin(newUser, newWallet, token)
 	response := utils.SuccessResponse("register success", http.StatusOK, formattedLogin)
 	c.JSON(http.StatusOK, response)
 }
@@ -60,14 +70,23 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := h.jwtService.GenerateToken(int(loggedinUser.ID))
+	inputWallet := &dto.WalletRequestBody{}
+	inputWallet.UserID = int(loggedinUser.ID)
+	wallet, err := h.walletService.GetWalletByUserId(inputWallet)
 	if err != nil {
 		response := utils.ErrorResponse("login failed", http.StatusInternalServerError, err.Error())
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
 
-	formattedLogin := dto.FormatLogin(loggedinUser, token)
+	token, err := h.jwtService.GenerateToken(int(loggedinUser.ID), wallet.Number)
+	if err != nil {
+		response := utils.ErrorResponse("login failed", http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	formattedLogin := dto.FormatLogin(loggedinUser, wallet, token)
 	response := utils.SuccessResponse("login success", http.StatusOK, formattedLogin)
 	c.JSON(http.StatusOK, response)
 }

@@ -33,7 +33,7 @@ func init() {
 		log.Fatal(err)
 	}
 
-	err = db.AutoMigrate(&model.User{}, &model.PasswordReset{})
+	err = db.AutoMigrate(&model.User{}, &model.PasswordReset{}, &model.Wallet{})
 	if err != nil {
 		log.Fatal(err)
 	}

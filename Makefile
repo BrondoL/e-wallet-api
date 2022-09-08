@@ -21,3 +21,7 @@ stop:
 
 dev:
 	go run .
+
+drop-all-table:
+	DROP SCHEMA public CASCADE;
+	CREATE SCHEMA public;

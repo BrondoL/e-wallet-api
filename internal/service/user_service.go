@@ -15,16 +15,19 @@ type UserService interface {
 }
 
 type userService struct {
-	userRepository r.UserRepository
+	userRepository   r.UserRepository
+	walletRepository r.WalletRepository
 }
 
 type USConfig struct {
-	UserRepository r.UserRepository
+	UserRepository   r.UserRepository
+	WalletRepository r.WalletRepository
 }
 
 func NewUserService(c *USConfig) UserService {
 	return &userService{
-		userRepository: c.UserRepository,
+		userRepository:   c.UserRepository,
+		walletRepository: c.WalletRepository,
 	}
 }
 
@@ -54,5 +57,6 @@ func (s *userService) CreateUser(input *dto.RegisterRequestBody) (*model.User, e
 	if err != nil {
 		return newUser, err
 	}
+
 	return newUser, nil
 }

@@ -73,16 +73,17 @@ func (s *authService) ForgotPass(input *dto.ForgotPasswordRequestBody) (*model.P
 		return &model.PasswordReset{}, &custom_error.UserNotFoundError{}
 	}
 
-	passwordReset, err := s.passwordResetRepository.FindByEmail(user.Email)
+	passwordReset, err := s.passwordResetRepository.FindByUserId(int(user.ID))
 	if err != nil {
 		return &model.PasswordReset{}, err
 	}
 
-	passwordReset.Email = user.Email
+	passwordReset.UserID = user.ID
 	passwordReset.Token = utils.GenerateString(10)
 	passwordReset.ExpiredAt = time.Now().Add(time.Minute * 15)
 
 	passwordReset, err = s.passwordResetRepository.Save(passwordReset)
+	passwordReset.User = *user
 
 	if err != nil {
 		return passwordReset, err
@@ -97,7 +98,7 @@ func (s *authService) ResetPass(input *dto.ResetPasswordRequestBody) (*model.Pas
 		return passwordReset, err
 	}
 
-	if passwordReset.Email == "" {
+	if passwordReset.User.Email == "" {
 		return passwordReset, &custom_error.ResetTokenNotFound{}
 	}
 
@@ -106,7 +107,11 @@ func (s *authService) ResetPass(input *dto.ResetPasswordRequestBody) (*model.Pas
 	}
 
 	user := &passwordReset.User
-	user.Password = input.Password
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
+	if err != nil {
+		return passwordReset, err
+	}
+	user.Password = string(passwordHash)
 
 	_, err = s.userRepository.Update(user)
 	if err != nil {

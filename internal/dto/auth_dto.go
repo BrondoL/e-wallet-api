@@ -29,24 +29,26 @@ type ForgotPasswordResponseBody struct {
 }
 
 type LoginResponseBody struct {
-	ID    uint   `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	Token string `json:"token"`
+	ID           uint   `json:"id"`
+	Name         string `json:"name"`
+	Email        string `json:"email"`
+	WalletNumber string `json:"wallet"`
+	Token        string `json:"token"`
 }
 
-func FormatLogin(user *model.User, token string) LoginResponseBody {
+func FormatLogin(user *model.User, wallet *model.Wallet, token string) LoginResponseBody {
 	return LoginResponseBody{
-		ID:    user.ID,
-		Name:  user.Name,
-		Email: user.Email,
-		Token: token,
+		ID:           user.ID,
+		Name:         user.Name,
+		Email:        user.Email,
+		WalletNumber: wallet.Number,
+		Token:        token,
 	}
 }
 
 func FormatForgotPassword(passwordReset *model.PasswordReset) ForgotPasswordResponseBody {
 	return ForgotPasswordResponseBody{
-		Email: passwordReset.Email,
+		Email: passwordReset.User.Email,
 		Token: passwordReset.Token,
 	}
 }

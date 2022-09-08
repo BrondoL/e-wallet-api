@@ -3,9 +3,10 @@ package model
 import "time"
 
 type PasswordReset struct {
-	Email     string `gorm:"primaryKey"`
+	ID        uint `gorm:"primaryKey"`
+	UserID    uint
+	User      User `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	Token     string
-	User      User `gorm:"foreignKey:Email;references:Email;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	ExpiredAt time.Time
 }
 

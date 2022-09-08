@@ -8,7 +8,7 @@ import (
 )
 
 type PassowrdResetRepository interface {
-	FindByEmail(email string) (*model.PasswordReset, error)
+	FindByUserId(id int) (*model.PasswordReset, error)
 	FindByToken(token string) (*model.PasswordReset, error)
 	Save(passwordReset *model.PasswordReset) (*model.PasswordReset, error)
 	Delete(passwordReset *model.PasswordReset) (*model.PasswordReset, error)
@@ -28,10 +28,10 @@ func NewPasswordResetRepository(c *PRConfig) PassowrdResetRepository {
 	}
 }
 
-func (r *passwordResetRepository) FindByEmail(email string) (*model.PasswordReset, error) {
+func (r *passwordResetRepository) FindByUserId(id int) (*model.PasswordReset, error) {
 	var passwordReset *model.PasswordReset
 
-	err := r.db.Where("email = ?", email).Find(&passwordReset).Error
+	err := r.db.Where("user_id = ?", id).Find(&passwordReset).Error
 	if err != nil {
 		return passwordReset, err
 	}

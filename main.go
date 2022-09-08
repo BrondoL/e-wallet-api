@@ -16,16 +16,19 @@ func main() {
 	db := config.GetConn()
 
 	userRepository := repository.NewUserRepository(&repository.URConfig{DB: db})
+	walletRepository := repository.NewWalletRepository(&repository.WRConfig{DB: db})
 	passwordResetRepository := repository.NewPasswordResetRepository(&repository.PRConfig{DB: db})
 
 	userService := service.NewUserService(&service.USConfig{UserRepository: userRepository})
 	authService := service.NewAuthService(&service.ASConfig{UserRepository: userRepository, PasswordResetRepository: passwordResetRepository})
+	walletService := service.NewWalletService(&service.WSConfig{UserRepository: userRepository, WalletRepository: walletRepository})
 	jwtService := service.NewJWTService(&service.JWTSConfig{})
 
 	h := handler.NewHandler(&handler.HandlerConfig{
-		UserService: userService,
-		AuthService: authService,
-		JWTService:  jwtService,
+		UserService:   userService,
+		AuthService:   authService,
+		WalletService: walletService,
+		JWTService:    jwtService,
 	})
 
 	routes := route.NewRouter(&route.RouterConfig{})
