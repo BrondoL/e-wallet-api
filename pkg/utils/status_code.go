@@ -23,6 +23,14 @@ func GetStatusCode(err error) int {
 		statusCode = http.StatusBadRequest
 	} else if _, ok := err.(*custom_error.SourceOfFundNotFoundError); ok {
 		statusCode = http.StatusBadRequest
+	} else if _, ok := err.(*custom_error.InsufficientBallanceError); ok {
+		statusCode = http.StatusBadRequest
+	} else if _, ok := err.(*custom_error.WalletNotFoundError); ok {
+		statusCode = http.StatusBadRequest
+	} else if _, ok := err.(*custom_error.WalletAlreadyExistsError); ok {
+		statusCode = http.StatusConflict
+	} else if _, ok := err.(*custom_error.TransferToSameWalletError); ok {
+		statusCode = http.StatusBadRequest
 	}
 	return statusCode
 }

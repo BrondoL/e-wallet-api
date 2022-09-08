@@ -1,6 +1,8 @@
 package service
 
 import (
+	"strconv"
+
 	"git.garena.com/sea-labs-id/batch-02/aulia-nabil/assignment-05-golang-backend/internal/dto"
 	"git.garena.com/sea-labs-id/batch-02/aulia-nabil/assignment-05-golang-backend/internal/model"
 	r "git.garena.com/sea-labs-id/batch-02/aulia-nabil/assignment-05-golang-backend/internal/repository"
@@ -9,6 +11,7 @@ import (
 
 type TransactionService interface {
 	TopUp(input *dto.TopUpRequestBody) (*model.Transaction, error)
+	Transfer(input *dto.TransferRequestBody) (*model.Transaction, error)
 }
 
 type transactionService struct {
@@ -49,7 +52,7 @@ func (s *transactionService) TopUp(input *dto.TopUpRequestBody) (*model.Transact
 	}
 
 	transaction := &model.Transaction{}
-	transaction.SourceOfFundID = sourceOfFund.ID
+	transaction.SourceOfFundID = &sourceOfFund.ID
 	transaction.UserID = input.User.ID
 	transaction.DestinationID = wallet.ID
 	transaction.Amount = input.Amount
@@ -67,8 +70,65 @@ func (s *transactionService) TopUp(input *dto.TopUpRequestBody) (*model.Transact
 		return transaction, err
 	}
 
-	transaction.SourceOfFund = *sourceOfFund
+	transaction.SourceOfFund = sourceOfFund
 	transaction.User = *input.User
 	transaction.Wallet = *wallet
+
+	return transaction, nil
+}
+
+func (s *transactionService) Transfer(input *dto.TransferRequestBody) (*model.Transaction, error) {
+	myWallet, err := s.walletRepository.FindByUserId(int(input.User.ID))
+	if err != nil {
+		return &model.Transaction{}, err
+	}
+	if myWallet.ID == 0 {
+		return &model.Transaction{}, &custom_error.WalletNotFoundError{}
+	}
+	if myWallet.Balance < input.Amount {
+		return &model.Transaction{}, &custom_error.InsufficientBallanceError{}
+	}
+	number := strconv.Itoa(input.WalletNumber)
+	if myWallet.Number == number {
+		return &model.Transaction{}, &custom_error.TransferToSameWalletError{}
+	}
+
+	destinationWallet, err := s.walletRepository.FindByNumber(number)
+	if err != nil {
+		return &model.Transaction{}, err
+	}
+	if destinationWallet.ID == 0 {
+		return &model.Transaction{}, &custom_error.WalletNotFoundError{}
+	}
+
+	transaction := &model.Transaction{}
+	transaction.UserID = input.User.ID
+	transaction.DestinationID = destinationWallet.ID
+	transaction.Amount = input.Amount
+	transaction.Description = input.Description
+	transaction.Category = "Send Money"
+
+	transaction, err = s.transactionRepository.Save(transaction)
+	if err != nil {
+		return transaction, err
+	}
+
+	myWallet.Balance = myWallet.Balance - input.Amount
+	myWallet, err = s.walletRepository.Update(myWallet)
+	if err != nil {
+		return transaction, err
+	}
+
+	destinationWallet.Balance = destinationWallet.Balance + input.Amount
+	_, err = s.walletRepository.Update(destinationWallet)
+	if err != nil {
+		return transaction, err
+	}
+
+	balance := uint(myWallet.Balance)
+	transaction.SourceOfFundID = &balance
+	transaction.User = *input.User
+	transaction.Wallet = *destinationWallet
+
 	return transaction, nil
 }

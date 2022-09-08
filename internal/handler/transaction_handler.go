@@ -47,4 +47,18 @@ func (h *Handler) Transfer(c *gin.Context) {
 			return
 		}
 	}
+
+	user := c.MustGet("user").(*model.User)
+	input.User = user
+	transaction, err := h.transactionService.Transfer(input)
+	if err != nil {
+		statusCode := utils.GetStatusCode(err)
+		response := utils.ErrorResponse("transfer failed", statusCode, err.Error())
+		c.JSON(statusCode, response)
+		return
+	}
+
+	formattedTransaction := dto.FormatTransfer(transaction)
+	response := utils.SuccessResponse("transfer success", http.StatusOK, formattedTransaction)
+	c.JSON(http.StatusOK, response)
 }
