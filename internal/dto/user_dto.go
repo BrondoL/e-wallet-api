@@ -35,3 +35,19 @@ func FormatUsers(authors []*model.User) []UserResponseBody {
 	}
 	return formattedUsers
 }
+
+type UserDetailResponse struct {
+	ID     uint           `json:"id"`
+	Name   string         `json:"name"`
+	Email  string         `json:"email"`
+	Wallet WalletResponse `json:"wallet"`
+}
+
+func FormatUserDetail(user *model.User, wallet *model.Wallet) UserDetailResponse {
+	formattedUser := UserDetailResponse{}
+	formattedUser.ID = user.ID
+	formattedUser.Name = user.Name
+	formattedUser.Email = user.Email
+	formattedUser.Wallet = FormatWallet(wallet)
+	return formattedUser
+}

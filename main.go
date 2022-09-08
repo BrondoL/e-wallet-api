@@ -31,7 +31,7 @@ func main() {
 		JWTService:    jwtService,
 	})
 
-	routes := route.NewRouter(&route.RouterConfig{})
+	routes := route.NewRouter(&route.RouterConfig{UserService: userService, JWTService: jwtService})
 
 	router := gin.Default()
 	router.NoRoute(h.NoRoute)
@@ -40,6 +40,7 @@ func main() {
 	api := router.Group(fmt.Sprintf("/api/%s", version))
 
 	routes.Auth(api, h)
+	routes.User(api, h)
 
 	router.Run(":8000")
 }

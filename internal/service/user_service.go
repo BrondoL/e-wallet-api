@@ -11,6 +11,7 @@ import (
 )
 
 type UserService interface {
+	GetUser(input *dto.UserRequestParams) (*model.User, error)
 	CreateUser(input *dto.RegisterRequestBody) (*model.User, error)
 }
 
@@ -29,6 +30,14 @@ func NewUserService(c *USConfig) UserService {
 		userRepository:   c.UserRepository,
 		walletRepository: c.WalletRepository,
 	}
+}
+
+func (s *userService) GetUser(input *dto.UserRequestParams) (*model.User, error) {
+	user, err := s.userRepository.FindById(input.UserID)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
 }
 
 func (s *userService) CreateUser(input *dto.RegisterRequestBody) (*model.User, error) {
