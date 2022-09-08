@@ -10,6 +10,7 @@ import (
 )
 
 type TransactionService interface {
+	GetTransactions(userID int, query *dto.TransactionRequestQuery) ([]*model.Transaction, error)
 	TopUp(input *dto.TopUpRequestBody) (*model.Transaction, error)
 	Transfer(input *dto.TransferRequestBody) (*model.Transaction, error)
 }
@@ -32,6 +33,15 @@ func NewTransactionService(c *TSConfig) TransactionService {
 		walletRepository:       c.WalletRepository,
 		sourceOfFundRepository: c.SourceOfFundRepository,
 	}
+}
+
+func (s *transactionService) GetTransactions(userID int, query *dto.TransactionRequestQuery) ([]*model.Transaction, error) {
+	transactions, err := s.transactionRepository.FindAll(userID)
+	if err != nil {
+		return transactions, err
+	}
+
+	return transactions, nil
 }
 
 func (s *transactionService) TopUp(input *dto.TopUpRequestBody) (*model.Transaction, error) {

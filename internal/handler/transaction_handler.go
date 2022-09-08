@@ -9,6 +9,31 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func (h *Handler) GetTransactions(c *gin.Context) {
+	query := &dto.TransactionRequestQuery{}
+	err := c.ShouldBindQuery(query)
+	if err != nil {
+		if err != nil {
+			errors := utils.FormatValidationError(err)
+			response := utils.ErrorResponse("get transaction failed", http.StatusUnprocessableEntity, errors)
+			c.JSON(http.StatusUnprocessableEntity, response)
+			return
+		}
+	}
+
+	user := c.MustGet("user").(*model.User)
+	transactions, err := h.transactionService.GetTransactions(int(user.ID), query)
+	if err != nil {
+		statusCode := utils.GetStatusCode(err)
+		response := utils.ErrorResponse("get transactions failed", statusCode, err.Error())
+		c.JSON(statusCode, response)
+		return
+	}
+
+	response := utils.SuccessResponse("get transaction success", http.StatusOK, transactions)
+	c.JSON(http.StatusOK, response)
+}
+
 func (h *Handler) TopUp(c *gin.Context) {
 	input := &dto.TopUpRequestBody{}
 	err := c.ShouldBindJSON(input)

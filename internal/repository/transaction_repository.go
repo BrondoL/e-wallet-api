@@ -6,6 +6,7 @@ import (
 )
 
 type TransactionRepository interface {
+	FindAll(userID int) ([]*model.Transaction, error)
 	Save(transaction *model.Transaction) (*model.Transaction, error)
 }
 
@@ -21,6 +22,17 @@ func NewTransactionRepository(c *TRConfig) TransactionRepository {
 	return &transactionRepository{
 		db: c.DB,
 	}
+}
+
+func (r *transactionRepository) FindAll(userID int) ([]*model.Transaction, error) {
+	var transactions []*model.Transaction
+
+	err := r.db.Where("user_id = ?", userID).Preload("SourceOfFund").Preload("User").Preload("Wallet").Order("updated_at DESC").Limit(10).Find(&transactions).Error
+	if err != nil {
+		return transactions, err
+	}
+
+	return transactions, nil
 }
 
 func (r *transactionRepository) Save(transaction *model.Transaction) (*model.Transaction, error) {

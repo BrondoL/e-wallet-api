@@ -30,6 +30,14 @@ type TopUpResponse struct {
 	UpdatedAt     time.Time `json:"updated_at"`
 }
 
+type TransactionRequestQuery struct {
+	Search string `form:"s"`
+	SortBy string `form:"sortBy"`
+	Sort   string `form:"sort"`
+	Limit  int    `form:"limit"`
+	Page   int    `form:"page"`
+}
+
 type Destination struct {
 	Name   string `json:"name"`
 	Number string `json:"number"`
