@@ -10,7 +10,7 @@ import (
 )
 
 type JWTService interface {
-	GenerateToken(userID int, walletNumber string) (string, error)
+	GenerateToken(userID int) (string, error)
 	ValidateToken(token string) (*jwt.Token, error)
 }
 
@@ -30,17 +30,15 @@ var ISSUER = os.Getenv("JWT_ISSUER")
 
 type idTokenClaims struct {
 	jwt.RegisteredClaims
-	UserID       int    `json:"user_id"`
-	WalletNumber string `json:"wallet"`
+	UserID int `json:"user_id"`
 }
 
-func (s *jwtService) GenerateToken(userID int, walletNumber string) (string, error) {
+func (s *jwtService) GenerateToken(userID int) (string, error) {
 	payload := idTokenClaims{}
 	payload.ExpiresAt = &jwt.NumericDate{Time: time.Now().Add(time.Minute * time.Duration(JWT_TTL))}
 	payload.IssuedAt = &jwt.NumericDate{Time: time.Now()}
 	payload.Issuer = ISSUER
 	payload.UserID = userID
-	payload.WalletNumber = walletNumber
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 	signedToken, err := token.SignedString(SECRET_KEY)

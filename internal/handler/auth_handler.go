@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 
 	"git.garena.com/sea-labs-id/batch-02/aulia-nabil/assignment-05-golang-backend/internal/dto"
@@ -13,7 +12,6 @@ func (h *Handler) Register(c *gin.Context) {
 	input := &dto.RegisterRequestBody{}
 
 	err := c.ShouldBindJSON(input)
-	log.Println(err)
 	if err != nil {
 		errors := utils.FormatValidationError(err)
 		response := utils.ErrorResponse("register failed", http.StatusUnprocessableEntity, errors)
@@ -39,7 +37,7 @@ func (h *Handler) Register(c *gin.Context) {
 		return
 	}
 
-	token, err := h.jwtService.GenerateToken(int(newUser.ID), newWallet.Number)
+	token, err := h.jwtService.GenerateToken(int(newUser.ID))
 	if err != nil {
 		response := utils.ErrorResponse("register failed", http.StatusInternalServerError, err.Error())
 		c.JSON(http.StatusInternalServerError, response)
@@ -79,7 +77,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := h.jwtService.GenerateToken(int(loggedinUser.ID), wallet.Number)
+	token, err := h.jwtService.GenerateToken(int(loggedinUser.ID))
 	if err != nil {
 		response := utils.ErrorResponse("login failed", http.StatusInternalServerError, err.Error())
 		c.JSON(http.StatusInternalServerError, response)

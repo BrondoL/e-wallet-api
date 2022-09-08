@@ -44,7 +44,6 @@ func AuthMiddleware(jwtService s.JWTService, userService s.UserService) gin.Hand
 		}
 
 		userID := int(payload["user_id"].(float64))
-		walletNumber := payload["wallet"]
 
 		params := &dto.UserRequestParams{}
 		params.UserID = userID
@@ -56,7 +55,6 @@ func AuthMiddleware(jwtService s.JWTService, userService s.UserService) gin.Hand
 		}
 
 		c.Set("user", user)
-		c.Set("wallet", walletNumber)
 		c.Next()
 	}
 }

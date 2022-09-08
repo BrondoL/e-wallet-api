@@ -9,7 +9,7 @@ import (
 type Transaction struct {
 	ID             uint `gorm:"primaryKey"`
 	SourceOfFundID uint
-	SourceOfFund   SourceOfFund
+	SourceOfFund   SourceOfFund `gorm:"foreignKey:SourceOfFundID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	UserID         uint
 	User           User `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	DestinationID  uint

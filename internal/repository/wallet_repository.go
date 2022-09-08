@@ -8,6 +8,7 @@ import (
 type WalletRepository interface {
 	FindByUserId(id int) (*model.Wallet, error)
 	Save(wallet *model.Wallet) (*model.Wallet, error)
+	Update(wallet *model.Wallet) (*model.Wallet, error)
 }
 
 type walletRepository struct {
@@ -37,6 +38,15 @@ func (r *walletRepository) FindByUserId(id int) (*model.Wallet, error) {
 
 func (r *walletRepository) Save(wallet *model.Wallet) (*model.Wallet, error) {
 	err := r.db.Create(&wallet).Error
+	if err != nil {
+		return wallet, err
+	}
+
+	return wallet, nil
+}
+
+func (r *walletRepository) Update(wallet *model.Wallet) (*model.Wallet, error) {
+	err := r.db.Save(&wallet).Error
 	if err != nil {
 		return wallet, err
 	}
