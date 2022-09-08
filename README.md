@@ -14,6 +14,9 @@ This is a RESTful API of E-Wallet project. This project was built with golang, p
 1. Unit Testing
 1. API documentation
 
+## Database Design
+<img src="./public/assets/e-wallet-ERD.png" alt="e-wallet-ERD"/>
+
 ### Tools Used:
 In this project, I use some tools listed below. But you can use any simmilar library that have the same purposes. But, well, different library will have different implementation type.
 
