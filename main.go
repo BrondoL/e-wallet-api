@@ -38,6 +38,7 @@ func main() {
 	routes := route.NewRouter(&route.RouterConfig{UserService: userService, JWTService: jwtService})
 
 	router := gin.Default()
+	router.Static("/docs/", "./pkg/swaggerui")
 	router.NoRoute(h.NoRoute)
 
 	version := os.Getenv("API_VERSION")
