@@ -10,7 +10,7 @@ engine:
 clean:
 	if [ -f e-wallet-api ; then rm e-wallet-api ; fi
 
-docker:
+image:
 	docker build -t e-wallet-image .
 
 run:
@@ -22,6 +22,6 @@ stop:
 dev:
 	go run .
 
-drop-all-table:
-	DROP SCHEMA public CASCADE;
-	CREATE SCHEMA public;
+db:
+	sudo -u postgres createdb wallet_db_aulia_nabil
+	psql -U postgres -h localhost wallet_db_aulia_nabil < wallet_db_aulia_nabil.sql

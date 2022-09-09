@@ -142,9 +142,9 @@ paths:
           required: false
           schema:
             type: string
-        - name: sort
+        - name: sortBy
           in: query
-          description: for sorting
+          description: field for sorting
           required: false
           explode: true
           schema:
@@ -154,7 +154,7 @@ paths:
               - date
               - amount
               - to
-        - name: sortBy
+        - name: sort
           in: query
           description: sorting mechanism
           required: false
