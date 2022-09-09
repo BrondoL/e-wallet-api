@@ -8,7 +8,7 @@ import (
 
 type TransactionRepository interface {
 	FindAll(userID int, query *dto.TransactionRequestQuery) ([]*model.Transaction, error)
-	Count() (int64, error)
+	Count(userID int) (int64, error)
 	Save(transaction *model.Transaction) (*model.Transaction, error)
 }
 
@@ -41,9 +41,9 @@ func (r *transactionRepository) FindAll(userID int, query *dto.TransactionReques
 	return transactions, nil
 }
 
-func (r *transactionRepository) Count() (int64, error) {
+func (r *transactionRepository) Count(userID int) (int64, error) {
 	var total int64
-	db := r.db.Model(&model.Transaction{}).Count(&total)
+	db := r.db.Model(&model.Transaction{}).Where("user_id = ?", userID).Count(&total)
 
 	if db.Error != nil {
 		return 0, db.Error

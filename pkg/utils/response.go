@@ -92,15 +92,8 @@ func ResponseWithPagination(message string, code int, data interface{}, metadata
 
 	var from int
 	var to int
-	if metadata.Sort == "DESC" {
-		if metadata.TotalNow != 0 {
-			from = ((metadata.Page - 1) * metadata.Limit) + 1
-		}
-		to = from + metadata.TotalNow - 1
-	} else {
-		if metadata.TotalNow != 0 {
-			from = ((metadata.Page - 1) * metadata.Limit) + 1
-		}
+	if metadata.TotalNow != 0 {
+		from = ((metadata.Page - 1) * metadata.Limit) + 1
 		to = from + metadata.TotalNow - 1
 	}
 

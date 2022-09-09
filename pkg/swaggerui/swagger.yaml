@@ -1,0 +1,834 @@
+openapi: 3.0.3
+info:
+  title: E-Wallet API
+  description: |-
+    This is a RESTful API of E-Wallet project. This project was built with golang, postgreSQL, and JWT authentication and implement clean architecture.
+  contact:
+    email: aulia.nabil@shopee.com
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api/v1
+tags:
+  - name: auth
+    description: Everything about authentication
+  - name: user
+    description: Everything about user
+  - name: transaction
+    description: Everything about transaction
+paths:
+  /sign-up:
+    post:
+      tags:
+        - auth
+      summary: Endpoint to register new user
+      description: Endpoint to register new
+      requestBody:
+        $ref: '#/components/requestBodies/signUp'
+      responses:
+        '200':
+          $ref: '#/components/responses/signUp'
+        '400':
+          $ref: '#/components/responses/400'
+        '409':
+          $ref: '#/components/responses/409'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/5XX'
+  /sign-in:
+    post:
+      tags:
+        - auth
+      summary: Endpoint to get access token
+      description: Endpoint to get access token
+      requestBody:
+        $ref: '#/components/requestBodies/signIn'
+      responses:
+        '200':
+          $ref: '#/components/responses/signIn'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/5XX'
+  /forgot-password:
+    post:
+      tags:
+        - auth
+      summary: Endpoint to get reset token
+      description: Endpoint to get reset token
+      requestBody:
+        description: Request body for forgot password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: nabil@shopee.com
+      responses:
+        '200':
+          $ref: '#/components/responses/forgotPassword'
+        '400':
+          $ref: '#/components/responses/400'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/5XX'
+  /reset-password:
+    post:
+      tags:
+        - auth
+      summary: Endpoint to get reset password
+      description: Endpoint to get reset password
+      requestBody:
+        description: Request body for reset password
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  example: CgitsHERS5
+                password:
+                  type: string
+                  example: 12345
+                confirm_password:
+                  type: string
+                  example: 12345
+      responses:
+        '200':
+          $ref: '#/components/responses/resetPassword'
+        '400':
+          $ref: '#/components/responses/400'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/5XX'
+  /profiles:
+    get:
+      tags:
+        - user
+      summary: Endpoint to get user details
+      description: Endpoint to get user details
+      responses:
+        '200':
+          $ref: '#/components/responses/profiles'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/5XX'
+      security:
+        - bearerAuth: []
+  /transactions:
+    get:
+      tags:
+        - transaction
+      summary: Endpoint to get all transactions
+      description: Endpoint to get all transactions
+      parameters:
+        - name: s
+          in: query
+          description: search by description
+          required: false
+          schema:
+            type: string
+        - name: sort
+          in: query
+          description: for sorting
+          required: false
+          explode: true
+          schema:
+            type: string
+            default: date
+            enum:
+              - date
+              - amount
+              - to
+        - name: sortBy
+          in: query
+          description: sorting mechanism
+          required: false
+          explode: true
+          schema:
+            type: string
+            default: desc
+            enum:
+              - asc
+              - desc
+        - name: limit
+          in: query
+          description: total data per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: page
+          in: query
+          description: page of data
+          required: false
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/transaction'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/5XX'
+      security:
+        - bearerAuth: []
+  /top-up:
+    post:
+      tags:
+        - transaction
+      summary: Endpoint to top up money
+      description: Endpoint to top up money
+      requestBody:
+        $ref: '#/components/requestBodies/topUp'
+      responses:
+        '200':
+          $ref: '#/components/responses/topUp'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/5XX'
+      security:
+        - bearerAuth: []
+  /transfer:
+    post:
+      tags:
+        - transaction
+      summary: Endpoint to transfer money to other user
+      description: Endpoint to transfer money to other user
+      requestBody:
+        $ref: '#/components/requestBodies/transfer'
+      responses:
+        '200':
+          $ref: '#/components/responses/transfer'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '422':
+          $ref: '#/components/responses/422'
+        '500':
+          $ref: '#/components/responses/5XX'
+      security:
+        - bearerAuth: []
+components:
+  schemas:
+    user:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: brondol
+        email:
+          type: string
+          example: user@example.com
+        password:
+          type: string
+          example: "$2a$04$hTbw4uWH0ogTVWrA9dPbZOKeHNXpchzbCytwU2SLw2/rMCR8AwKpu"
+    passwordReset:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        token:
+          type: string
+          example: CgitsHERS5
+        expired_at:
+          type: string
+          example: "2022-09-09T13:01:23.11364106+07:00"
+        user:
+          $ref: '#/components/schemas/user'
+    wallet:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        number:
+          type: string
+          example: 100004
+        balance:
+          type: integer
+          example: 100000
+        user:
+          $ref: '#/components/schemas/user'
+    sourceOfFund:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Bank Transfer"
+    transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 25
+        source_of_fund_id:
+          type: integer
+          example: 1
+          nullable: true
+        sourceOfFund:
+          $ref: '#/components/schemas/sourceOfFund'
+        user_id:
+          type: integer
+          example: 1
+        user:
+          $ref: '#/components/schemas/user'
+        destination_id:
+          type: integer
+          example: 1
+        wallet:
+          $ref: '#/components/schemas/wallet'
+        amount:
+          type: integer
+          example: 10000
+        description:
+          type: string
+          example: "bayar hutang"
+        category:
+          type: string
+          example: "Send Money"
+        created_at:
+          type: string
+          example: "2022-09-09T13:01:23.11364106+07:00"
+        updated_at:
+          type: string
+          example: "2022-09-09T13:01:23.11364106+07:00"
+        deleted_at:
+          type: string
+          example: "2022-09-09T13:01:23.11364106+07:00"
+    accessToken:
+      type: object
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          example: 1
+        name:
+          type: string
+          example: brondol
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        wallet:
+          type: string
+          example: '100005'
+        token:
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJTRUEgTGFicyBJRCIsImV4cCI6MTY2MjY5NTI5OCwiaWF0IjoxNjYyNjk0Mzk4LCJ1c2VyX2lkIjo1fQ.PtqPY9YtbcwDkqbMsL37Q68WNFkvUfelcKevPRSGr6U'
+    meta:
+      type: object
+      properties:
+        message:
+          type: string
+          example: action success
+        code:
+          type: integer
+          example: 200
+        status:
+          type: string
+          example: success
+  requestBodies:
+    signIn:
+      description: Request body for sign-in
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: nabil@user.com
+              password:
+                type: string
+                example: 12345
+            required:
+              - email
+              - password
+    signUp:
+      description: Request body for sign-up
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: wawik@user.com
+              name:
+                type: string
+                example: acong
+              password:
+                type: string
+                example: 12345
+            required:
+              - email
+              - password
+              - name
+              - phone
+    topUp:
+      description: Request body for top up
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              amount:
+                type: integer
+                example: 65000
+              source_of_fund_id:
+                type: integer
+                example: 1
+            required:
+              - amount
+              - source_of_fund_id
+    transfer:
+      description: Request body for top up
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              amount:
+                type: integer
+                example: 65000
+              wallet_number:
+                type: integer
+                example: 100001
+              description:
+                type: string
+                example: "bayar netflix"
+            required:
+              - amount
+              - wallet_number
+  responses:
+    signIn:
+      description: login success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/meta'
+              data:
+                $ref: '#/components/schemas/accessToken'
+    signUp:
+      description: register success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/meta'
+              data:
+                $ref: '#/components/schemas/accessToken'
+    forgotPassword:
+      description: forgot password success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/meta'
+              data:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: nabil@shopee.com
+                  token:
+                    type: string
+                    example: M78iHCuRkD
+    resetPassword:
+      description: reset password success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/meta'
+              data:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: brondol
+                  email:
+                    type: string
+                    example: nabil@shopee.com
+    profiles:
+      description: get user detail success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/meta'
+              data:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: brondol
+                  email:
+                    type: string
+                    example: nabil@shopee.com
+                  wallet:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      number:
+                        type: string
+                        example: "100002"
+                      balance:
+                        type: integer
+                        example: 118572000
+    transaction:
+      description: get user detail success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/meta'
+              data:
+                type: object
+                properties:
+                  current_page:
+                    type: integer
+                    example: 2
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        source_of_fund:
+                          type: string
+                          example: "Bank Transfer"
+                          nullable: true
+                        destination:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: mario
+                            number:
+                              type: string
+                              number: 100002
+                        amount:
+                          type: integer
+                          example: 60000
+                        description:
+                          type: string
+                          example: "Top Up from bank transfer"
+                        category:
+                          type: string
+                          example: "Top Up"
+                        created_at:
+                          type: string
+                          example: "2022-09-09T12:02:43.010542+07:00"
+                        updated_at:
+                          type: string
+                          example: "2022-09-09T12:02:43.010542+07:00"
+                  first_page_url:
+                    type: string
+                    example: "http://localhost:8000/api/v1/transactions?page=1"
+                  from:
+                    type: integer
+                    example: 11
+                  last_page:
+                    type: integer
+                    example: 3
+                  last_page_url:
+                    type: string
+                    example: "http://localhost:8000/api/v1/transactions?page=3"
+                  next_page_url:
+                    type: string
+                    example: "http://localhost:8000/api/v1/transactions?page=3"
+                  path:
+                    type: string
+                    example: "http://localhost:8000/api/v1/transactions"
+                  per_page:
+                    type: integer
+                    example: 10
+                  prev_page_url:
+                    type: string
+                    example: "http://localhost:8000/api/v1/transactions?page=1"
+                  to:
+                    type: integer
+                    example: 20
+                  total:
+                    type: integer
+                    example: 28
+    topUp:
+      description: top up success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/meta'
+              data:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  source_of_fund:
+                    type: string
+                    example: "Bank Transfer"
+                  amount:
+                    type: integer
+                    example: 600000
+                  balance:
+                    type: integer
+                    example: 85400000
+                  description:
+                    type: string
+                    example: "Top Up from Bank Transfer"
+                  category:
+                    type: string
+                    example: "Top Up"
+                  created_at:
+                    type: string
+                    example: "2022-09-09T13:01:23.11364106+07:00"
+                  updated_at:
+                    type: string
+                    example: "2022-09-09T13:01:23.11364106+07:00"
+    transfer:
+      description: top up success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                $ref: '#/components/schemas/meta'
+              data:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 25
+                  destination:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: mario
+                      number:
+                        type: string
+                        number: 100002
+                  amount:
+                    type: integer
+                    example: 10000
+                  balance:
+                    type: integer
+                    example: 1090000
+                  description:
+                    type: string
+                    example: "bayar hutang"
+                  category:
+                    type: string
+                    example: "Send Money"
+                  created_at:
+                    type: string
+                    example: "2022-09-09T13:01:23.11364106+07:00"
+                  updated_at:
+                    type: string
+                    example: "2022-09-09T13:01:23.11364106+07:00"
+    '400':
+      description: Bad request.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: action failed
+                  code:
+                    type: integer
+                    example: 400
+                  status:
+                    type: string
+                    example: error
+              error:
+                type: string
+                example: bad request.
+    '401':
+      description: Unauthorized.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: action failed
+                  code:
+                    type: integer
+                    example: 401
+                  status:
+                    type: string
+                    example: error
+              error:
+                type: string
+                example: unauthorized
+    '404':
+      description: Not found.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: action failed
+                  code:
+                    type: integer
+                    example: 404
+                  status:
+                    type: string
+                    example: error
+              error:
+                type: string
+                example: not found
+    '409':
+      description: Conflict.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: action failed
+                  code:
+                    type: integer
+                    example: 409
+                  status:
+                    type: string
+                    example: error
+              error:
+                type: string
+                example: the request could not be processed because of conflict in the request
+    '422':
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: action failed
+                  code:
+                    type: integer
+                    example: 422
+                  status:
+                    type: string
+                    example: error
+              error:
+                type: array
+                items:
+                  type: string
+                example: ["Name required", "Email required"]
+    '5XX':
+      description: unexpected error.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              meta:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: action failed
+                  code:
+                    type: integer
+                    example: 500
+                  status:
+                    type: string
+                    example: error
+              error:
+                type: string
+                example: unexpected error
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

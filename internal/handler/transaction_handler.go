@@ -30,7 +30,7 @@ func (h *Handler) GetTransactions(c *gin.Context) {
 		c.JSON(statusCode, response)
 		return
 	}
-	totalTransactions, err := h.transactionService.CountTransaction()
+	totalTransactions, err := h.transactionService.CountTransaction(int(user.ID))
 	if err != nil {
 		response := utils.ErrorResponse("get transactions failed", http.StatusInternalServerError, err.Error())
 		c.JSON(http.StatusInternalServerError, response)
