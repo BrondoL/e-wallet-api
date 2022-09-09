@@ -20,6 +20,7 @@ func (h *Handler) GetTransactions(c *gin.Context) {
 			return
 		}
 	}
+	query = dto.FormatQuery(query)
 
 	user := c.MustGet("user").(*model.User)
 	transactions, err := h.transactionService.GetTransactions(int(user.ID), query)
@@ -29,9 +30,16 @@ func (h *Handler) GetTransactions(c *gin.Context) {
 		c.JSON(statusCode, response)
 		return
 	}
+	totalTransactions, err := h.transactionService.CountTransaction()
+	if err != nil {
+		response := utils.ErrorResponse("get transactions failed", http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, response)
+		return
+	}
 
 	formattedTransaction := dto.FormatTransactions(transactions)
-	response := utils.SuccessResponse("get transaction success", http.StatusOK, formattedTransaction)
+	metadata := utils.Metadata{Resource: "transactions", TotalAll: int(totalTransactions), TotalNow: len(transactions), Page: query.Page, Limit: query.Limit, Sort: query.Sort}
+	response := utils.ResponseWithPagination("get transaction success", http.StatusOK, formattedTransaction, metadata)
 	c.JSON(http.StatusOK, response)
 }
 

@@ -1,12 +1,14 @@
 package repository
 
 import (
+	"git.garena.com/sea-labs-id/batch-02/aulia-nabil/assignment-05-golang-backend/internal/dto"
 	"git.garena.com/sea-labs-id/batch-02/aulia-nabil/assignment-05-golang-backend/internal/model"
 	"gorm.io/gorm"
 )
 
 type TransactionRepository interface {
-	FindAll(userID int) ([]*model.Transaction, error)
+	FindAll(userID int, query *dto.TransactionRequestQuery) ([]*model.Transaction, error)
+	Count() (int64, error)
 	Save(transaction *model.Transaction) (*model.Transaction, error)
 }
 
@@ -24,15 +26,30 @@ func NewTransactionRepository(c *TRConfig) TransactionRepository {
 	}
 }
 
-func (r *transactionRepository) FindAll(userID int) ([]*model.Transaction, error) {
+func (r *transactionRepository) FindAll(userID int, query *dto.TransactionRequestQuery) ([]*model.Transaction, error) {
 	var transactions []*model.Transaction
 
-	err := r.db.Where("user_id = ?", userID).Preload("SourceOfFund").Preload("User").Preload("Wallet.User").Order("updated_at DESC").Limit(10).Find(&transactions).Error
+	offset := (query.Page - 1) * query.Limit
+	orderBy := query.SortBy + " " + query.Sort
+	queryBuider := r.db.Limit(query.Limit).Offset(offset).Order(orderBy)
+	err := queryBuider.Where("user_id = ?", userID).Where("description ILIKE ?", "%"+query.Search+"%").Preload("SourceOfFund").
+		Preload("User").Preload("Wallet.User").Find(&transactions).Error
 	if err != nil {
 		return transactions, err
 	}
 
 	return transactions, nil
+}
+
+func (r *transactionRepository) Count() (int64, error) {
+	var total int64
+	db := r.db.Model(&model.Transaction{}).Count(&total)
+
+	if db.Error != nil {
+		return 0, db.Error
+	}
+
+	return total, nil
 }
 
 func (r *transactionRepository) Save(transaction *model.Transaction) (*model.Transaction, error) {

@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"strings"
 	"time"
 
 	"git.garena.com/sea-labs-id/batch-02/aulia-nabil/assignment-05-golang-backend/internal/model"
@@ -115,4 +116,29 @@ func FormatTransactions(transactions []*model.Transaction) []TransactionResponse
 		formattedTransactions = append(formattedTransactions, formattedBook)
 	}
 	return formattedTransactions
+}
+
+func FormatQuery(query *TransactionRequestQuery) *TransactionRequestQuery {
+	if query.Limit == 0 {
+		query.Limit = 10
+	}
+	if query.Page == 0 {
+		query.Page = 1
+	}
+
+	query.SortBy = strings.ToLower(query.SortBy)
+	if query.SortBy == "date" {
+		query.SortBy = "updated_at"
+	} else if query.SortBy == "to" {
+		query.SortBy = "destination_id"
+	} else if query.SortBy != "amount" {
+		query.SortBy = "updated_at"
+	}
+
+	query.Sort = strings.ToUpper(query.Sort)
+	if query.Sort != "ASC" {
+		query.Sort = "DESC"
+	}
+
+	return query
 }
