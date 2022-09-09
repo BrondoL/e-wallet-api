@@ -55,6 +55,32 @@ $ make dev
 $ make test
 ```
 
+#### User Credentials
+```json
+[
+    {
+        "email": "nabil@shopee.com",
+        "password": "12345",
+    },
+    {
+        "email": "mario@shopee.com",
+        "password": "12345",
+    },
+    {
+        "email": "gerald@shopee.com",
+        "password": "12345",
+    },
+    {
+        "email": "arkin@shopee.com",
+        "password": "12345",
+    },
+    {
+        "email": "azmi@shopee.com",
+        "password": "12345",
+    },
+]
+```
+
 ### Tools Used:
 In this project, I use some tools listed below. But you can use any simmilar library that have the same purposes. But, well, different library will have different implementation type.
 

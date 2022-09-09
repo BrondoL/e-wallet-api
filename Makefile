@@ -1,5 +1,5 @@
 mock:
-	mockery --all --case=lowercase
+	mockery --all --case=lowercase --output=./internal/mocks
 
 test:
 	go test -v -cover -covermode=atomic ./...
