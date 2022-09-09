@@ -27,7 +27,7 @@ func NewTransactionRepository(c *TRConfig) TransactionRepository {
 func (r *transactionRepository) FindAll(userID int) ([]*model.Transaction, error) {
 	var transactions []*model.Transaction
 
-	err := r.db.Where("user_id = ?", userID).Preload("SourceOfFund").Preload("User").Preload("Wallet").Order("updated_at DESC").Limit(10).Find(&transactions).Error
+	err := r.db.Where("user_id = ?", userID).Preload("SourceOfFund").Preload("User").Preload("Wallet.User").Order("updated_at DESC").Limit(10).Find(&transactions).Error
 	if err != nil {
 		return transactions, err
 	}

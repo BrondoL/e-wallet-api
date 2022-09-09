@@ -30,7 +30,8 @@ func (h *Handler) GetTransactions(c *gin.Context) {
 		return
 	}
 
-	response := utils.SuccessResponse("get transaction success", http.StatusOK, transactions)
+	formattedTransaction := dto.FormatTransactions(transactions)
+	response := utils.SuccessResponse("get transaction success", http.StatusOK, formattedTransaction)
 	c.JSON(http.StatusOK, response)
 }
 

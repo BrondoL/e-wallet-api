@@ -54,6 +54,17 @@ type TransferResponse struct {
 	UpdatedAt     time.Time   `json:"updated_at"`
 }
 
+type TransactionResponse struct {
+	ID           uint        `json:"id"`
+	SourceOfFund string      `json:"source_of_fund"`
+	Destination  Destination `json:"destination"`
+	Amount       int         `json:"amount"`
+	Description  string      `json:"description"`
+	Category     string      `json:"category"`
+	CreatedAt    time.Time   `json:"created_at"`
+	UpdatedAt    time.Time   `json:"updated_at"`
+}
+
 func FormatTopUp(transaction *model.Transaction) TopUpResponse {
 	return TopUpResponse{
 		ID:            transaction.ID,
@@ -78,4 +89,30 @@ func FormatTransfer(transaction *model.Transaction) TransferResponse {
 		CreatedAt:     transaction.CreatedAt,
 		UpdatedAt:     transaction.UpdatedAt,
 	}
+}
+
+func FormatTransaction(transaction *model.Transaction) TransactionResponse {
+	var sourceOfFund string
+	if transaction.SourceOfFund != nil {
+		sourceOfFund = transaction.SourceOfFund.Name
+	}
+	return TransactionResponse{
+		ID:           transaction.ID,
+		SourceOfFund: sourceOfFund,
+		Destination:  Destination{Name: transaction.Wallet.User.Name, Number: transaction.Wallet.Number},
+		Amount:       transaction.Amount,
+		Description:  transaction.Description,
+		Category:     transaction.Category,
+		CreatedAt:    transaction.CreatedAt,
+		UpdatedAt:    transaction.UpdatedAt,
+	}
+}
+
+func FormatTransactions(transactions []*model.Transaction) []TransactionResponse {
+	formattedTransactions := []TransactionResponse{}
+	for _, transaction := range transactions {
+		formattedBook := FormatTransaction(transaction)
+		formattedTransactions = append(formattedTransactions, formattedBook)
+	}
+	return formattedTransactions
 }

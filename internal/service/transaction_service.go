@@ -111,7 +111,21 @@ func (s *transactionService) Transfer(input *dto.TransferRequestBody) (*model.Tr
 		return &model.Transaction{}, &custom_error.WalletNotFoundError{}
 	}
 
+	//create transaction for receiver
 	transaction := &model.Transaction{}
+	transaction.UserID = destinationWallet.User.ID
+	transaction.DestinationID = myWallet.ID
+	transaction.Amount = input.Amount
+	transaction.Description = input.Description
+	transaction.Category = "Receive Money"
+
+	transaction, err = s.transactionRepository.Save(transaction)
+	if err != nil {
+		return transaction, err
+	}
+
+	// create transaction for sender
+	transaction = &model.Transaction{}
 	transaction.UserID = input.User.ID
 	transaction.DestinationID = destinationWallet.ID
 	transaction.Amount = input.Amount
