@@ -1,4 +1,4 @@
-# assignment-05-golang-backend
+# E-Wallet API
 
 ## Description
 This is a RESTful API of E-Wallet project. This project was built with golang, postgreSQL, and JWT authentication and implement clean architecture.
