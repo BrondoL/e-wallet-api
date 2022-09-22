@@ -61,8 +61,8 @@ func Test_transactionService_GetTransactions(t *testing.T) {
 		sourceOfFundID := uint(1)
 		transactionRepository.Mock.On("FindAll", 1, &dto.TransactionRequestQuery{}).
 			Return([]*model.Transaction{{ID: 1, SourceOfFundID: &sourceOfFundID, SourceOfFund: &model.SourceOfFund{ID: 1, Name: "Cash"},
-				UserID: 1, User: model.User{ID: 1, Name: "nabil", Email: "nabil@shopee.com"},
-				DestinationID: 1, Wallet: model.Wallet{ID: 1, UserID: 1, User: model.User{ID: 1, Name: "nabil", Email: "nabil@shopee.com"}, Number: "100001", Balance: 10000},
+				UserID: 1, User: model.User{ID: 1, Name: "nabil", Email: "nabil@user.com"},
+				DestinationID: 1, Wallet: model.Wallet{ID: 1, UserID: 1, User: model.User{ID: 1, Name: "nabil", Email: "nabil@user.com"}, Number: "100001", Balance: 10000},
 				Amount: 50000, Description: "Top up from cash", Category: "Top Up", CreatedAt: time.Now(), UpdatedAt: time.Now()}}, nil).
 			Once()
 
@@ -165,7 +165,7 @@ func Test_transactionService_Transfer(t *testing.T) {
 		input.Amount = 500000
 		input.Description = "beli somay dek"
 		input.WalletNumber = 100002
-		input.User = &model.User{ID: 1, Name: "nabil", Email: "nabil@shopee.com"}
+		input.User = &model.User{ID: 1, Name: "nabil", Email: "nabil@user.com"}
 		transactions, err := transactionService.Transfer(input)
 
 		assert.Nil(t, err)

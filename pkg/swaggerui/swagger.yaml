@@ -4,7 +4,7 @@ info:
   description: |-
     This is a RESTful API of E-Wallet project. This project was built with golang, postgreSQL, and JWT authentication and implement clean architecture.
   contact:
-    email: aulia.nabil@shopee.com
+    email: nabilunited2@gmail.com
   version: 1.0.0
 servers:
   - url: http://localhost:8000/api/v1
@@ -69,7 +69,7 @@ paths:
               properties:
                 email:
                   type: string
-                  example: nabil@shopee.com
+                  example: nabil@user.com
       responses:
         '200':
           $ref: '#/components/responses/forgotPassword'
@@ -476,7 +476,7 @@ components:
                 properties:
                   email:
                     type: string
-                    example: nabil@shopee.com
+                    example: nabil@user.com
                   token:
                     type: string
                     example: M78iHCuRkD
@@ -500,7 +500,7 @@ components:
                     example: brondol
                   email:
                     type: string
-                    example: nabil@shopee.com
+                    example: nabil@user.com
     profiles:
       description: get user detail success
       content:
@@ -521,7 +521,7 @@ components:
                     example: brondol
                   email:
                     type: string
-                    example: nabil@shopee.com
+                    example: nabil@user.com
                   wallet:
                     type: object
                     properties:
