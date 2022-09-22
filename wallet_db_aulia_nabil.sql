@@ -280,11 +280,11 @@ COPY public.transactions (id, source_of_fund_id, user_id, destination_id, amount
 --
 
 COPY public.users (id, name, email, password) FROM stdin;
-1	nabil	nabil@shopee.com	$2a$04$6cp6IBREiRW27La2hkM.uekYT71m/OzGKAW7vzfVRetPZwFPgREC.
-2	mario	mario@shopee.com	$2a$04$93AZUXoqhOu6TNb481MYke3iDbM8UAzizOHmKSEf36bQtzV3kffwm
-3	gerald	gerald@shopee.com	$2a$04$dwl4i0hAV/x/OUEbbPB8gufGHLyXhxK7ZSfIREjQ7xcX08OTrtKFW
-4	azmi	azmi@shopee.com	$2a$04$I0WOe4FMjq/.k9PowmJ7x.1cmBT1vBLNj/L6FBm3IuznHbdwVSPFa
-5	arkin	arkin@shopee.com	$2a$04$ReD6.DB5iRo3Gry9AoZiaeCtLIewk6g6XTDcpZpCLbdfXG33q25ea
+1	nabil	nabil@user.com	$2a$04$6cp6IBREiRW27La2hkM.uekYT71m/OzGKAW7vzfVRetPZwFPgREC.
+2	mario	mario@user.com	$2a$04$93AZUXoqhOu6TNb481MYke3iDbM8UAzizOHmKSEf36bQtzV3kffwm
+3	gerald	gerald@user.com	$2a$04$dwl4i0hAV/x/OUEbbPB8gufGHLyXhxK7ZSfIREjQ7xcX08OTrtKFW
+4	azmi	azmi@user.com	$2a$04$I0WOe4FMjq/.k9PowmJ7x.1cmBT1vBLNj/L6FBm3IuznHbdwVSPFa
+5	arkin	arkin@user.com	$2a$04$ReD6.DB5iRo3Gry9AoZiaeCtLIewk6g6XTDcpZpCLbdfXG33q25ea
 \.
 
 

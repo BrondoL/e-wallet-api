@@ -59,23 +59,23 @@ $ make test
 ```json
 [
     {
-        "email": "nabil@shopee.com",
+        "email": "nabil@user.com",
         "password": "12345",
     },
     {
-        "email": "mario@shopee.com",
+        "email": "mario@user.com",
         "password": "12345",
     },
     {
-        "email": "gerald@shopee.com",
+        "email": "gerald@user.com",
         "password": "12345",
     },
     {
-        "email": "arkin@shopee.com",
+        "email": "arkin@user.com",
         "password": "12345",
     },
     {
-        "email": "azmi@shopee.com",
+        "email": "azmi@user.com",
         "password": "12345",
     },
 ]
